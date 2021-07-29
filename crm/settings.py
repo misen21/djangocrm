@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'users',
     'leads',
+    'categories',
+    'sources',
+    'flatpickr',
 ]
 
 MIDDLEWARE = [

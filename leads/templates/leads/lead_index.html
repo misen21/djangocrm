@@ -6,9 +6,221 @@
 {% endblock title %}
 
 {% block content %}
-  <div class="container">
-      <div class="row">
-          <p>po e bej kot sa te kesh nje ide por leads app punoje ti me terezi ok?</p>
-      </div>
+{{form.media}}
+
+
+<div class="spoon">
+  <div class="host">
+    <h1 class="header">Welcome</h1>
+    <h3>This is the personal workspace for <code>{{request.user.username}}</code>.</h3>
   </div>
+  <div class="peer">
+    <h2>Quickly create a new lead.</h2>
+    <form action="{% url 'leads:lead-create' %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        {% render_field form.name class="form-control" placeholder="Name" style="border-radius: 20px;" %}
+        {% render_field form.phone class="form-control" placeholder="Phone" style="border-radius: 20px;" %}
+        {% render_field form.task class="form-control" placeholder="Task" style="border-radius: 20px;" %}
+
+      </div>
+      <div class="form-group">
+        {% render_field form.email class="form-control" placeholder="Email" style="border-radius: 20px;" %}
+        {% render_field form.source class="form-control" placeholder="Source" style="border-radius: 20px;" %}
+        {% render_field form.user class="form-control" placeholder="User" style="border-radius: 20px;" %}
+
+      </div>
+      <button type="submit" class="btn btn-dark col-12">Create</button>
+    </form>
+  </div>
+</div>
+<div class="content">
+  <table id="misen" class="table table-bordered table-hover nowrap table-sm" cellspacing="0" style="width:100%">
+    {% csrf_token %}
+	<thead class="thead-dark">
+		<tr>
+			<th class="text-center">#</th>
+            {% if request.user.is_staff %}
+            <th class="text-center"><input type="checkbox" name="" id="site_select_all"></th>
+            {% endif %}
+			<th class="text-center">Name</th>
+			<th class="text-center">Phone</th>
+			<th class="text-center">Data Creation</th>
+			<th class="text-center">Source</th>
+			<th class="text-center">Category</th>
+            {% if request.user.is_staff %}
+            <th class="text-center">User</th>
+			<th class="text-center">Action</th>
+            {% endif %}
+		</tr>
+	</thead>
+	<tbody>
+		{% for lead in leads %}
+		<tr id="{{lead.id}}">
+			<td class="text-center">{{lead.id}}</td>
+            {% if request.user.is_staff %}
+            <td class="text-center"><input type="checkbox" name="sel" id="delete_lead" value="{{lead.id}}"></td>
+            {% endif %}
+			<td class="text-center"><a href="{% url 'leads:lead-update' lead.pk %}">{{lead.name}}</a></td>
+			<td class="text-center">{{lead.phone}}</td>
+			<td class="text-center">{{lead.created_at|date:'Y-m-d'}}</td>
+			<td class="text-center">{{lead.source}}</td>
+			<td class="text-center">{{lead.category}}</td>
+            {% if request.user.is_staff %}
+            <td class="text-center">{{lead.user}}</td>
+			<td class="text-center">
+				<a href="{% url 'leads:lead-update' lead.pk %}"><i class="fas fa-edit text-primary"></i></a>
+				<a href="{% url 'leads:lead-delete' lead.pk %}" onclick="return confirm('Are you sure to delete this Lead?');"><i class="fas fa-trash-alt text-danger"></i></a>
+			</td>
+            {% endif %}
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+<script>
+  function get_Selected_id() {
+        var searchIDs = $("input[name=sel]:checked").map(function(){
+            return $(this).val();
+        }).get();
+        return searchIDs;
+    }
+
+    $(document).ready(function() {
+        var table = $('#misen').DataTable({
+            "paging": true,
+            "aLengthMenu": [[10, 25, 50, 100,], [10, 25, 50, 100,]],
+            "iDisplayLength": 50,
+            "searching": false,
+            "responsive": true,
+            "ordering":true,
+            "order": []
+        });
+        // Handle click on "Select all" control
+        $('#site_select_all').on('click', function(){
+            // Check/uncheck all checkboxes in the table
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+    $("#delete_all").click(function(event){
+            event.preventDefault();
+            if (confirm("Are you sure to Delete Selected?")) {
+                var id = get_Selected_id();
+                var csrf = $('input[name=csrfmiddlewaretoken').val();
+                if (id!='') {
+                    /*$('#delete_leads_ids').eq(0).val(leads_ids);
+                    $('#delete_multiple_form').submit();*/
+                    $.ajax({
+                        url: "{%url 'leads:lead-index' %}",
+                        method: "POST",
+                        data: {
+                            id,
+                            csrfmiddlewaretoken:csrf,
+                        },
+                        success:function(response){
+                            for(var i=0; i<id.length; i++){
+                                $('tr#'+id[i]+'').css('background-color', '#ccc');
+                                $('tr#'+id[i]+'').fadeOut('slow');
+                            }
+                            window.location.href = ".";
+                        }
+                    })
+
+                } else {
+                    return confirm("No leads selected");
+                }
+            }
+            return false;
+        });
+
+       /* $("#delete_all").click(function(event){
+            event.preventDefault();
+            if (confirm("Are you sure to Delete Selected?")) {
+                var leads_ids=get_Selected_id();
+                if (leads_ids!='') {
+                    $('#delete_leads_ids').eq(0).val(leads_ids);
+                    $('#delete_multiple_form').submit();
+                } else {
+                    return confirm("No leads selected");
+                }
+            }
+            return false;
+        });
+        $("#delete_commento").click(function(event){
+            event.preventDefault();
+            if (confirm("Are you sure to empty the comments for these leads?")) {
+                var leads_ids=get_Selected_id();
+                if (leads_ids!='') {
+                    $('#delete_comments_ids').eq(0).val(leads_ids);
+                    $('#delete_comments_form').submit();
+                } else {
+                    return confirm("No leads selected");
+                }
+            }
+            return false;
+        });
+        
+                    flatpickr("#flatpickr");
+        
+        $("#assign_button").click(function(event){
+            event.preventDefault();
+                var leads_ids=get_Selected_id();
+                if (leads_ids!='') {
+                    $('#assign_leads_ids').eq(0).val(leads_ids);
+                    $('#assign_users').submit();
+                } else {
+                    return confirm("No leads selected");
+                }
+            return false;
+        });
+        $("#change_button").click(function(event){
+            event.preventDefault();
+            var leads_ids=get_Selected_id();
+            if (leads_ids!='') {
+                $('#change_leads_ids').eq(0).val(leads_ids);
+                $('#change_status').submit();
+            } else {
+                return confirm("No leads selected");
+            }
+            return false;
+        });*/
+
+    });
+</script>
+<script>
+  // Unix time value from server: seconds since 1970-01-01T00:00:00Z
+  // Below is a number for 2014-07-02T06:48:24.000Z, set to actual server value
+  var serverTime = 	Math.floor(new Date().getTime()/1000.0);
+  
+  var doClock = (function () {
+  
+    // Calc offset from server time
+    // Javascript time value is milliseconds since above epoch
+    var serverOffset = serverTime - (new Date() / 1000 | 0);
+  
+    // Helper
+    function z(n){return (n<10?'0':'') + n}
+  
+    return function() {
+  
+      // Create a new Date object each time so
+      // it doesn't matter if a second or more is skipped
+      var now = new Date();
+  
+      // Adjust for server offset
+      now.setSeconds(now.getSeconds() + serverOffset);
+  
+      // write clock to document, values are local, not UTC
+      document.getElementById('clock').innerHTML = z(now.getHours())   + ':' +
+                                                   z(now.getMinutes()) + ':' +
+                                                   z(now.getSeconds());
+      // Run again just after next full second
+      setTimeout(doClock, 1020 - now.getMilliseconds());
+    };    
+  }());
+  
+  window.onload = doClock;
+  
+  </script>
 {% endblock content %}

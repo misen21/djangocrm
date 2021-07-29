@@ -1,0 +1,91 @@
+{%extends 'base.html'%}
+{% load widget_tweaks %}
+<title>
+	{% block title %}
+	  categories
+	{% endblock title %}
+  </title>
+  <body>
+{%block content%}
+<div class="spoon">
+		<div class="host">
+			<h1>
+				Category Workspace.
+			</h1>
+			<h3>
+				See the listed categories or create a new one by the form in the right.
+			</h3>
+		</div>
+		<div class="peer">
+			<h2>Create a new category.</h2>
+			<form action="{% url 'categories:category-create' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					{% render_field form.category class="form-control" placeholder="Category" style="border-radius: 20px;" %}
+				</div>
+				<button type="submit" class="btn btn-dark col-12">Create</button>
+			</form>
+		</div>
+</div>
+<div class="content">
+<table id="categories" class="table table-bordered nowrap table-sm" cellspacing="0" style="width:100%">
+    {% csrf_token %}
+	<thead class="thead-dark">
+		<tr>
+			<th class="text-center">#</th>
+			<th class="text-center">Category</th>
+			<th class="text-center">Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for category in categories %}
+		<tr id="{{lead.id}}">
+			<td class="text-center">{{category.id}}</td>
+			<td class="text-center"><a href="{% url 'categories:category-update' category.pk %}">{{category}}</a></td>
+			<td class="text-center">
+				<a href="{% url 'categories:category-update' category.pk %}"><i class="fas fa-edit text-primary"></i></a>
+				<a href="{% url 'categories:category-delete' category.pk %}" onclick="return confirm('Are you sure to delete this Category?');"><i class="fas fa-trash-alt text-danger"></i></a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% if is_paginated %}
+<nav aria-label="Page navigation example">
+<ul class="pagination justify-content-center pagination-circle">
+ {% if page_obj.has_previous %}
+  <li class="page-item"><a class="page-link text-secondary" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-arrow-left text-dark"></i> Previous</a></li>
+{% else %}
+  <li class="page-item"><a><span class="page-link text-secondary">&laquo;</span></a></li>
+{% endif %}
+{% for i in paginator.page_range %}
+  {% if page_obj.number == i %}
+  <li class="active page-item text-secondary"><span class="page-link">{{ i }}</span></li>
+  {% else %}
+  <li class="page-item"><a class="page-link text-dark" href="?page={{ i }}">{{ i }}</a></li>
+  {% endif %}
+{% endfor %}
+{% if page_obj.has_next %}
+  <li class="page-item"><a class="page-link text-secondary" href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-arrow-right text-dark"></i></a></li>
+{% else %}
+  <li class="page-item"><span class="page-link text-secondary">&raquo;</span></li>
+{% endif %}
+</ul>
+</nav>
+{% endif %}
+<br><br>
+<script>
+    $(document).ready(function(){
+        var table = $('#categories').DataTable({
+            "paging":true,
+            "aLengthMenu":[[10,25,50,100],[10,25,50,100]],
+            "iDisplayLength":25,
+            "searching":false,
+            "responsive":true,
+            "order": []
+        });
+	});
+</script>
+</div>
+{%endblock content%}
+</body>

@@ -25,4 +25,7 @@ urlpatterns = [
     path('',auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('users/',  include('users.urls', namespace="users")),
+    path('leads/',  include('leads.urls', namespace="leads")),
+    path('categories/',  include('categories.urls', namespace="categories")),
+    path('sources/',  include('sources.urls', namespace="sources")),
 ]
