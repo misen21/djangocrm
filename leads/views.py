@@ -5,29 +5,14 @@ from .forms import LeadForm, LeadModelForm
 from django.core.exceptions import PermissionDenied
 
 
-class LeadView(generic.View):
-    def get(self, request):
-        allleads = Lead.objects.order_by('-updated_at')
-        form = LeadForm
-        context = {
-            'leads': allleads,
-            'form': form
-        }
-        return  render(request, "leads/lead_index.html", context)
-
-    def post(self, request, *args, **kwargs):
-      if request.method=="POST":
-        lead_ids=request.POST.getlist('id[]')
-        for id in lead_ids:
-            lead = Lead.objects.get(pk=id)
-            lead.delete()
-        return redirect("/leads")
-
-class LeadCreateView(generic.CreateView):
+class LeadView(generic.CreateView):
     model = Lead
-    template_name = "leads/lead_create.html"
+    template_name = "leads/lead_index.html"
     form_class = LeadModelForm
 
+    def get_context_data(self, **kwargs):
+        kwargs['leads'] = Lead.objects.order_by('-updated_at')
+        return super(LeadView, self).get_context_data(**kwargs)
     def get_success_url(self):
        return reverse("leads:lead-index")
 

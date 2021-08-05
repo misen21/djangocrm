@@ -48,6 +48,7 @@ body{
 }
 .others{
     flex: 5;
+    background-color: lightgray;
 }
 .sideWrapper{
     padding: 20px;
@@ -75,3 +76,60 @@ body{
     background-color:#dee0e0;
 }
 
+.content{
+    background-color: #fff;
+    margin: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    -webkit-box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+    box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58);
+}
+.spoon{
+    display: flex;
+    justify-content:space-between;
+    margin: 20px;
+    padding: 20px;
+}
+.peer{
+    background-color: #fff;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    -webkit-box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+    box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58);
+}
+.host{
+    background-color: #fff;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    -webkit-box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+    box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+}
+.titleBar{
+    background-color: #fff;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.header{
+    color: indigo;
+    font-weight: 900;
+    margin: 10px;
+}
+.form-group{
+    display: flex;
+}
+.btn{
+    border-radius: 20px;
+}
+.mikrotik{
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    background-color: #fff;
+    border-radius: 10px;
+    -webkit-box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+    box-shadow: -1px 0px 15px 5px rgba(0,0,0,0.58); 
+}

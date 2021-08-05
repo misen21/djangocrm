@@ -16,12 +16,12 @@
   </div>
   <div class="peer">
     <h2>Quickly create a new lead.</h2>
-    <form action="{% url 'leads:lead-create' %}" method="POST">
+    <form method="POST">
       {% csrf_token %}
       <div class="form-group">
         {% render_field form.name class="form-control" placeholder="Name" style="border-radius: 20px;" %}
         {% render_field form.phone class="form-control" placeholder="Phone" style="border-radius: 20px;" %}
-        {% render_field form.task class="form-control" placeholder="Task" style="border-radius: 20px;" %}
+        {% render_field form.category class="form-control" placeholder="Category" style="border-radius: 20px;" %}
 
       </div>
       <div class="form-group">
@@ -77,6 +77,9 @@
 		{% endfor %}
 	</tbody>
 </table>
+</div>
+<div class="mikrotik">
+    
 </div>
 <script>
   function get_Selected_id() {
